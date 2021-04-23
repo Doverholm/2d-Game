@@ -1,11 +1,13 @@
 const canvas = document.getElementById("canvas");
 const c = canvas.getContext("2d");
+const img = document.getElementById("img");
+const img2 = document.getElementById("img2");
 
 let playerPosX = 100;
 let playerPosY = 100;
 
-let playerLength = 100;
-let playerWidth = 50;
+let playerLength = 80;
+let playerWidth = 30;
 
 let playerVelocityX = 0;
 let playerVelocityY = 0;
@@ -13,6 +15,14 @@ let playerVelocityY = 0;
 let playerJumping = true;
 let speed = 0;
 let playerWallRideVar = false;
+
+
+let obsticleWidth = 200;
+let obsticleHeight = 50;
+
+let obsticlePosX = 400;
+let obsticlePosY = canvas.height - obsticleHeight;
+
 
 let upPressed = false;
 let leftPressed = false;
@@ -28,6 +38,7 @@ function drawGame() {
   playerCollision();
   playerWallRide();
   drawPlayer();
+  drawObsticle();
 
 }
 
@@ -36,6 +47,19 @@ function drawGame() {
 function clearScreen() {
   c.fillStyle = "cyan";
   c.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function inputs() {
+  if (rightPressed) {
+    playerVelocityX = playerVelocityX + 1.2;
+  }
+  if (leftPressed) {
+    playerVelocityX = playerVelocityX - 1.2;
+  }
+  if (upPressed && playerJumping == false) {
+    playerVelocityY = playerVelocityY - 20;
+    playerJumping = true;
+  }
 }
 
 function playerMovement() {
@@ -88,6 +112,24 @@ function playerCollision() {
     playerPosX = canvas.width - playerWidth;
     playerVelocityX = 0;
   }
+
+  if (playerPosX + playerWidth > obsticlePosX && playerPosY + playerLength == canvas.height && playerPosX < obsticlePosX + obsticleWidth / 2) {
+    playerPosX = obsticlePosX - playerWidth;
+    playerVelocityX = 0;
+  }
+
+  if (playerPosX < obsticlePosX + obsticleWidth && playerPosX > obsticlePosX + obsticleWidth / 2 && playerPosY + playerLength == canvas.height) {
+    playerPosX = obsticlePosX + obsticleWidth;
+    playerVelocityX = 0;
+  }
+
+  if (playerPosY + playerLength >= obsticlePosY && playerPosX + playerWidth > obsticlePosX && playerPosX < obsticlePosX + obsticleWidth) {
+    playerVelocityY = 0;
+    playerPosY = obsticlePosY - playerLength;
+    playerJumping = false;
+  }
+
+
 }
 
 function playerWallRide() {
@@ -99,8 +141,13 @@ function playerWallRide() {
 }
 
 function drawPlayer() {
-  c.fillStyle = "green";
-  c.fillRect(playerPosX, playerPosY, playerWidth, playerLength);
+    c.drawImage(img, playerPosX, playerPosY, 50, 100);
+  //  c.drawImage(img2, playerPosX, playerPosY, 50, 100);
+}
+
+function drawObsticle() {
+  c.fillStyle = "red";
+  c.fillRect(obsticlePosX, obsticlePosY, obsticleWidth, obsticleHeight);
 }
 
 //ArrowKeys EventListeners-------------------------------------
@@ -138,19 +185,7 @@ function keyUp(event) {
   }
 }
 
-//ArrowKayes movement------------------------------
 
-function inputs() {
-  if (rightPressed) {
-    playerVelocityX = playerVelocityX + 1.2;
-  }
-  if (leftPressed) {
-    playerVelocityX = playerVelocityX - 1.2;
-  }
-  if (upPressed && playerJumping == false) {
-    playerVelocityY = playerVelocityY - 20;
-    playerJumping = true;
-  }
-}
+
 
 drawGame();
